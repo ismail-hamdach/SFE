@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\SearchType;
 use App\Form\ClientType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,12 +27,28 @@ class UserController extends AbstractController
         $this->passChanged = ["id" => null, "password" => null];
     }
     /**
-     * @Route("/admin/user/", name="user_index", methods={"GET"})
+     * @Route("/admin/user/", name="user_index", methods={"GET","POST"})
      */
-    public function index(UserRepository $userRepository): Response
-    {
+    public function index(Request $request, UserRepository $userRepository): Response
+    {   
+        $query = ['id' => null];
+        
+        $form = $this->createFormBuilder($query)
+            ->add('id', TextType::class, [
+                'label' => 'Recherche',
+                'attr' => ['placeholder' => 'Réfernece']
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $query = $form->getData();
+            return $this->redirectToRoute('user_search', ['id' => $query['id']]);
+        }
+
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findByRole("ROLE_EMPLOYE"),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -69,6 +87,16 @@ class UserController extends AbstractController
     {
         return $this->render('user/show.html.twig', [
             'user' => $user,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/user/result/{id}", name="user_search", methods={"GET"})
+     */
+    public function search(int $id, UserRepository $userRepository): Response
+    {   
+        return $this->render('user/show.html.twig', [
+            'user' => $userRepository->findById($id),
         ]);
     }
 

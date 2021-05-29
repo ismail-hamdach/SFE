@@ -50,6 +50,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
+    
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
@@ -67,15 +69,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?User
+    
+    public function findById($value): ?User
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
+            ->Where('u.roles not like :roles')
+            ->setParameter('roles', "%ROLE_CLIENT%")
+            ->andWhere('u.id = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+    
 }
