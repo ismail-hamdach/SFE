@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tache{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="section">
+            <h1>Gestion des Taches</h1>
+        </div>
+        <div class="section">
+            <table class="table table-striped table-hover">
+                <tbody>
+                    <tr>
+                        <th>#</th>
+                        <td>{{ tache.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Titre</th>
+                        <td>{{ tache.titre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ tache.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Etat</th>
+                        <td>{{ tache.etat ? 'Complete' : 'En cours' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Effectué à</th>
+                        <td>{{ tache.employe }}</td>
+                    </tr>
+                    <tr>
+                        <th>Projet</th>
+                        <td>{{ tache.projet }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duree</th>
+                        <td>{{ tache.duree }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="section">
+            
+            <div class="btn btn-sm btn-dark">
+                <a href="{{ path('tache_edit', {'id': tache.id}) }}">Modifier</a>
+            </div>
+            
+            <div class="btn btn-sm btn-dark">
+                <a href="{{ path('tache_index') }}">Retourner à la liste</a>
+            </div>
+
+            {{ include('tache/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,3 +1,8 @@
-#index:
+# index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+service_list:
+  path: /gerant/service
+    # the controller value has the format 'controller_class::method_name'
+  controller: App\Controller\ServiceController::index

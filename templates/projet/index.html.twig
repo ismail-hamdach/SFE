@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}G. Projets{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row section">
+            <div class="col-sm-6">
+                <h1>Gestion des Projets</h1>
+            </div>
+            <div class="col-sm-6 d-flex justify-content-end">
+                <div class="btn btn-dark"> <a href="{{ path('projet_new') }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+            </div>
+        </div>
+    
+
+        <div class="row section">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover w-auto">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="th-lg" scope="row" >#</th>
+                            <th class="th-lg" scope="row">Titre</th>
+                            {# <th class="th-lg" scope="row">Description</th> #}
+                            
+                            <th class="th-lg" scope="row">Responsable</th> 
+                            <th class="th-lg" scope="row">Prix</th>
+                            <th class="th-lg" scope="row">Avance</th>
+                            <th class="th-lg" scope="row">Service</th>
+                            <th class="th-lg" scope="row"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for projet in projets %}
+                        <tr>
+                            <th scope="row">{{ projet.id }}</th>
+                            <td>{{ projet.titre }}</td>
+                            {# <td>{{ projet.description }}</td> #}
+                            <td>{{ projet.responsable }}</td>
+                            <td>{{ projet.prix }}</td>
+                            <td>{{ projet.avance }}</td>
+                            <td>{{ projet.service }}</td>
+                                
+                            <td>
+                                <div class="iconOnWhite">
+                                    <a href="{{ path('projet_show', {'id': projet.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                    <a href="{{ path('projet_edit', {'id': projet.id}) }}" data-toggle="popover" title="Modifier" ><i class="fas fa-edit"> </i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">Vide</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+    </table>
+
+{% endblock %}

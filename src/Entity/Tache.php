@@ -38,12 +38,12 @@ class Tache
     private $duree;
 
     /**
-     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="taches")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="taches")
      */
     private $employe;
 
     /**
-     * @ORM\ManyToOne(targetEntity=projet::class, inversedBy="taches")
+     * @ORM\ManyToOne(targetEntity=Projet::class, inversedBy="taches")
      */
     private $projet;
 

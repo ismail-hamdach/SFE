@@ -40,7 +40,7 @@ class Projet
     private $avance;
 
     /**
-     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="projets")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="projets")
      */
     private $responsable;
 
@@ -164,5 +164,10 @@ class Projet
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->titre;
     }
 }

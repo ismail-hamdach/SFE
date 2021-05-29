@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter Service{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="section">
+            <h1>Ajouter un nouveau Service</h1>
+        </div>
+        <div class="section d-flex justify-content-start">
+            {{ include('service/_form.html.twig') }}
+        </div>
+        <div class="section">
+            <div class="btn btn-sm btn-dark">
+                <a href="{{ path('service_index') }}">Retourner à la liste</a>
+             </div>
+        </div>
+    </div>
+{% endblock %}
