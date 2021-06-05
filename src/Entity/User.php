@@ -67,11 +67,23 @@ class User implements UserInterface
      */
     private $taches;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Projet::class, mappedBy="client")
+     */
+    private $commande;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Projet::class, mappedBy="client")
+     */
+    private $command;
+
     public function __construct()
     {
         $this->services = new ArrayCollection();
         $this->projets = new ArrayCollection();
         $this->taches = new ArrayCollection();
+        $this->commande = new ArrayCollection();
+        $this->command = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -283,5 +295,65 @@ class User implements UserInterface
 
     public function __toString(){
         return $this->prenom[0].'. '.$this->nom;
+    }
+
+    /**
+     * @return Collection|Projet[]
+     */
+    public function getCommande(): Collection
+    {
+        return $this->commande;
+    }
+
+    public function addCommande(Projet $commande): self
+    {
+        if (!$this->commande->contains($commande)) {
+            $this->commande[] = $commande;
+            $commande->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Projet $commande): self
+    {
+        if ($this->commande->removeElement($commande)) {
+            // set the owning side to null (unless already changed)
+            if ($commande->getClient() === $this) {
+                $commande->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Projet[]
+     */
+    public function getCommand(): Collection
+    {
+        return $this->command;
+    }
+
+    public function addCommand(Projet $command): self
+    {
+        if (!$this->command->contains($command)) {
+            $this->command[] = $command;
+            $command->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Projet $command): self
+    {
+        if ($this->command->removeElement($command)) {
+            // set the owning side to null (unless already changed)
+            if ($command->getClient() === $this) {
+                $command->setClient(null);
+            }
+        }
+
+        return $this;
     }
 }

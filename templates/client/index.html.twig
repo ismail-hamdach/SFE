@@ -12,6 +12,9 @@
                 <div class="btn btn-dark"> <a href="{{ path('client_new') }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
             </div>
         </div>
+        <div class="section d-flex justify-content-start">
+                {{ include('client/_searchForm.html.twig') }}
+        </div>
         <div class="row section">
             <div class="table-responsive">
                 <table class="table table-striped table-hover w-auto">

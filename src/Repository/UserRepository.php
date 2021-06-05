@@ -70,10 +70,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     */
 
     
-    public function findById($value): ?User
+    public function findByIdAndRole($value, $role): ?User
     {
+
+        $query = $role == 'ROLE_EMPLOYE' ? 'u.roles not like :roles' : 'u.roles like :roles';
         return $this->createQueryBuilder('u')
-            ->Where('u.roles not like :roles')
+            ->Where($query)
             ->setParameter('roles', "%ROLE_CLIENT%")
             ->andWhere('u.id = :val')
             ->setParameter('val', $value)

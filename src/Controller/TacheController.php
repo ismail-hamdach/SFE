@@ -5,41 +5,96 @@ namespace App\Controller;
 use App\Entity\Tache;
 use App\Form\TacheType;
 use App\Repository\TacheRepository;
+use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/tache")
- */
+// /**
+//  * @Route("/tache")
+//  */
 class TacheController extends AbstractController
 {
     /**
-     * @Route("/", name="tache_index", methods={"GET"})
+     * @Route("/gerant/tache/index/{idp}", name="tache_index", methods={"GET"})
+     * @Route("/employe/tache/index/", name="tache_index_employe", methods={"GET"})
      */
-    public function index(TacheRepository $tacheRepository): Response
+    public function index(Request $request, TacheRepository $tacheRepository, ProjetRepository $projetRepository): Response
     {
+        $routeName = $request->get('_route');
+        if($routeName == 'tache_index'){
+            $projet = $projetRepository->find($request->get('idp'));
+            if($projet->getResponsable()->getId() == $this->getUser()->getId()){
+                $taches = $tacheRepository->findByProjet($projet);
+            }
+            else{
+                $taches = null;
+            }
+            $type = 'gerant';
+        }else{
+            $taches = $tacheRepository->findBy(['employe' => $this->getUser()], ['etat' => 'ASC', 'dateCreation' => 'DESC']);
+            $type = 'employe';
+        }
+        
+        
         return $this->render('tache/index.html.twig', [
-            'taches' => $tacheRepository->findAll(),
+            'taches' => $taches,
+            'type' => $type,
         ]);
     }
 
     /**
-     * @Route("/new", name="tache_new", methods={"GET","POST"})
+     * @Route("/gerant/tache/new/{idp}", name="tache_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, ProjetRepository $projetRepository): Response
     {
-        $tache = new Tache();
-        $form = $this->createForm(TacheType::class, $tache);
-        $form->handleRequest($request);
+        $projet = $projetRepository->find($request->get('idp'));
+        if($projet && $projet->getResponsable()->getId() == $this->getUser()->getId()){
+            // $choices = [];
+            // $projets = $projetRepository->findByResponsable($this->getUser());
+            // foreach($projets as $projet){
+            //     $choices [] = [$projet->getTitre() => $projet];
+            // }
+            $tache = new Tache();
+            $form = $this->createFormBuilder($tache)
+                ->add('titre')
+                ->add('description', TextareaType::class)
+                // ->add('etat', ChoiceType::class, [
+                //     'choices' => [
+                //         'En cours' => false,
+                //         'Complete' => true,
+                //     ]
+                // ])
+                ->add('duree', null, [
+                    'label' => 'Durée'
+                ])
+                ->add('employe', null, [
+                    'label' => 'Afféctué à '
+                ])
+                // ->add('projet', ChoiceType::class, [
+                //     'choices' => [
+                //         $projet -> getTitre() => $projet
+                //     ]
+                // ])
+                ->getForm();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($tache);
-            $entityManager->flush();
+            $form->handleRequest($request);
 
-            return $this->redirectToRoute('tache_index');
+            if ($form->isSubmitted() && $form->isValid() ) {
+                $tache->setProjet($projet);
+                $tache->setEtat(false);
+                $tache->setDateCreation(new \DateTime('now'));
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($tache);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('tache_index', ['idp' => $projet->getId()]);
+            }
+        }else{
+            return $this->redirectToRoute('projet_index_gerant');
         }
 
         return $this->render('tache/new.html.twig', [
@@ -49,33 +104,92 @@ class TacheController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="tache_show", methods={"GET"})
+     * @Route("gerant/tache/show/{id}", name="tache_show", methods={"GET", "POST"})
+     * @Route("employe/tache/show/{id}", name="tache_show_employe", methods={"GET", "POST"})
      */
-    public function show(Tache $tache): Response
+    public function show(Tache $tache, ProjetRepository $projetRepository, Request $request): Response
     {
-        return $this->render('tache/show.html.twig', [
-            'tache' => $tache,
-        ]);
+        $routeName = $request->get('_route');
+        if($routeName == 'tache_show'){
+            $type = 'gerant';
+            $projet = $tache->getProjet();
+            if($tache->getProjet()->getResponsable()->getId() == $this->getUser()->getId() && $projet == $tache->getProjet()){
+                return $this->render('tache/show.html.twig', [
+                    'tache' => $tache,
+                    'type' => $type,
+                ]);
+            }else{
+                return $this->render('tache/show.html.twig', [
+                    'tache' => null,
+                    'type' => $type,
+                ]);
+            }
+        }else{
+            $type = 'employe';
+            if($tache->getEmploye() == $this->getUser()){
+                return $this->render('tache/show.html.twig', [
+                    'tache' => $tache,
+                    'type' => $type,
+                ]);
+            }else{
+                return $this->render('tache/show.html.twig', [
+                    'tache' => null,
+                    'type' => $type,
+                ]);
+            }
+        }
+        
     }
 
     /**
-     * @Route("/{id}/edit", name="tache_edit", methods={"GET","POST"})
+     * @Route("gerant/tache/{id}/edit/{idp}", name="tache_edit", methods={"GET","POST"})
+     * @Route("gerant/tache/{id}/edit/", name="tache_edit_employe", methods={"GET","POST"})
      */
     public function edit(Request $request, Tache $tache): Response
     {
-        $form = $this->createForm(TacheType::class, $tache);
-        $form->handleRequest($request);
+        $routeName = $request->get('_route');
+        if($routeName == 'tache_edit'){
+            $form = $this->createFormBuilder($tache)
+                ->add('titre')
+                ->add('description', TextareaType::class)
+                ->add('etat', ChoiceType::class, [
+                    'choices' => [
+                        'En cours' => false,
+                        'Complete' => true,
+                    ]
+                ])
+                ->add('duree', null, [
+                    'label' => 'Durée'
+                ])
+                ->add('employe', null, [
+                    'label' => 'Afféctué à '
+                ])
+                // ->add('projet', ChoiceType::class, [
+                //     'choices' => [
+                //         $projet -> getTitre() => $projet
+                //     ]
+                // ])
+                ->getForm();
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('tache_show');
+                return $this->redirectToRoute('tache_index', ['idp' => $request->get('idp')]);
+            }
+
+            return $this->render('tache/edit.html.twig', [
+                'tache' => $tache,
+                'form' => $form->createView(),
+            ]);
+        }else{
+            if($tache->getEmploye() == $this->getUser()){
+                $tache->setEtat(!$tache->getEtat());
+                $this->getDoctrine()->getManager()->flush();
+            }
+            return $this->redirectToRoute('tache_index_employe');
         }
-
-        return $this->render('tache/edit.html.twig', [
-            'tache' => $tache,
-            'form' => $form->createView(),
-        ]);
+        
     }
 
     /**

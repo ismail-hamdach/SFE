@@ -6,6 +6,7 @@ use App\Entity\Service;
 use App\Form\ServiceType;
 use App\Repository\ServiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,12 +17,38 @@ use Symfony\Component\Routing\Annotation\Route;
 class ServiceController extends AbstractController
 {
     /**
-     * @Route("/admin/service/", name="service_index", methods={"GET"})
+     * @Route("/admin/service/", name="service_index", methods={"GET", "POST"})
      */
-    public function index(ServiceRepository $serviceRepository): Response
+    public function index(Request $request, ServiceRepository $serviceRepository): Response
     {
+        $query = ['id' => null];
+        
+        $form = $this->createFormBuilder($query)
+            ->add('id', TextType::class, [
+                'label' => 'Recherche',
+                'attr' => ['placeholder' => 'Réfernece']
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $query = $form->getData();
+            return $this->redirectToRoute('service_search', ['id' => $query['id']]);
+        }
+
         return $this->render('service/index.html.twig', [
             'services' => $serviceRepository->findAll(),
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/service/result/{id}", name="service_search", methods={"GET"})
+     */
+    public function search(int $id, ServiceRepository $serviceRepository): Response
+    {   
+        return $this->render('service/show.html.twig', [
+            'service' => $serviceRepository->findById($id,),
         ]);
     }
 

@@ -52,9 +52,19 @@
             {{ include('user/_delete_form.html.twig') }}
         </div>
         {% else %}
-            <tr>
-                <td colspan="7">Aucun trouvé</td>
-            </tr>
+                <tr>
+                    <td colspan="7">Aucun resultat trouvé</td>
+                </tr>
+             </tbody>
+                
+            </table>
+        </div>
+        <div class="section">
+            
+            <div class="btn btn-sm btn-dark">
+                <a href="{{ path('user_index') }}">Retourner à la liste</a>
+            </div>
+        </div>
         {% endif %}
     </div>
 {% endblock %}

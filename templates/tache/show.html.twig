@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'gerant.base.html.twig' %}
 
 {% block title %}Tache{% endblock %}
 
@@ -42,16 +42,25 @@
             </table>
         </div>
         <div class="section">
-            
-            <div class="btn btn-sm btn-dark">
-                <a href="{{ path('tache_edit', {'id': tache.id}) }}">Modifier</a>
-            </div>
-            
-            <div class="btn btn-sm btn-dark">
-                <a href="{{ path('tache_index') }}">Retourner à la liste</a>
-            </div>
+            {% if type == 'gerant' %}
+                <div class="btn btn-sm btn-dark">
+                    <a href="{{ path('tache_edit', {'idp': tache.projet.id,'id': tache.id}) }}">Modifier</a>
+                </div>
+                
+                <div class="btn btn-sm btn-dark">
+                    <a href="{{ path('tache_index', {'idp': tache.projet.id}) }}">Retourner à la liste</a>
+                </div>
 
-            {{ include('tache/_delete_form.html.twig') }}
+                {{ include('tache/_delete_form.html.twig') }}
+            {% else %}
+                <div class="btn btn-sm btn-dark">
+                    <a href="{{ path('tache_edit_employe', {'id': tache.id}) }}">{{ tache.etat ? 'Pas terminer ?' : 'Terminer'}}</a>
+                </div>
+                
+                <div class="btn btn-sm btn-dark">
+                    <a href="{{ path('tache_index_employe') }}">Retourner à la liste</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

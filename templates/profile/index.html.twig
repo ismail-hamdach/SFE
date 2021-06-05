@@ -1,0 +1,50 @@
+{% extends 'gerant.base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+
+
+    <div class="container-fluid">
+        <div class="section row justify-content-between">
+            <div class="col-sm-6"><h1>Profile</h1></div>
+            <div class="col-sm-6 text-right iconOnWhite" ><div><a  href="{{path('edit_profile_client')}}"><i class="fas fa-edit"></i></a></div></div>
+            
+        </div>
+        <div class="section">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ app.user.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prenom</th>
+                        <td>{{ app.user.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ app.user.email }}</td>
+                    </tr>
+{% if app.user.roles[0] != 'ROLE_CLIENT' %}
+                    <tr>
+                        <th>Mode</th>
+                        <td>{{ app.user.email }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="section iconOnWhite"><a c  href="{{path('changer_mot_passe')}}">Changer le mot de passe</a></div>
+        <div class="section iconOnWhite"><a c  href="{{path('profile_mode')}}">Changer le mode</a></div>
+    </div>
+    {% else %}
+                </tbody>
+            </table>
+        </div>
+        <div class="section iconOnWhite"><a c  href="{{path('changer_mot_passe')}}">Changer le mot de passe</a></div>
+    </div>
+        
+{% endif %}
+
+    
+{% endblock %}

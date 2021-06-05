@@ -1,0 +1,42 @@
+{% extends 'gerant.base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+
+
+    <div class="container-fluid">
+        <div class="section row justify-content-between">
+            <div class="col-sm-6"><h1>Modes</h1></div> 
+        </div>
+        <div class="section">
+            <table class="table table-striped">
+            {% if app.user.roles[0] != 'ROLE_CLIENT' %}
+                <tbody>
+                {% for role in app.user.roles %}
+                    {% if role == "ROLE_ADMIN" %}
+                        <tr>
+                            <th>Admin</th>
+                            <td><div class="iconOnWhite"><a  href="{{path('user_index')}}"><i class="fas fa-external-link-alt"></i></a></div></td>
+                        </tr>
+                    {% else %}
+                        {% if role == "ROLE_GERANT" %}
+                            <tr>
+                                <th>Gérant</th>
+                                <td><div class="iconOnWhite"><a  href="{{path('projet_index_gerant')}}"><i class="fas fa-external-link-alt"></i></a></div></td>
+                            </tr>
+                        {% else %}
+                            {% if role == "ROLE_EMPLOYE" %}
+                                <tr>
+                                    <th>Employe</th>
+                                    <td><div class="iconOnWhite"><a  href="{{path('tache_index_employe')}}"><i class="fas fa-external-link-alt"></i></a></div></td>
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            {% endif %}
+            </table>
+    
+{% endblock %}

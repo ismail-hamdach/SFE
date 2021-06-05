@@ -19,32 +19,56 @@ class TacheRepository extends ServiceEntityRepository
         parent::__construct($registry, Tache::class);
     }
 
-    // /**
-    //  * @return Tache[] Returns an array of Tache objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Tache[] Returns an array of Tache objects
+     */
+    
+    public function findByProjet($value)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
+            ->andWhere('t.projet = :val')
             ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('t.etat, t.dateCreation', 'DESC')
+            // ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Tache
+    /**
+     * @return Tache[] Returns an array of Tache objects
+     */
+    
+    public function findByEmploye($value)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
+            ->andWhere('t.employe = :val')
             ->setParameter('val', $value)
+            ->orderBy('t.dateCreation', 'ASC')
+            ->orderBy('t.projet', 'ASC')
+            // ->setMaxResults(10)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
-    */
+
+    
+    public function AvancementProjet($value): float
+    {
+        $nbrTermine = count($this->createQueryBuilder('t')
+        ->where('t.projet = :val')
+        ->setParameter('val', $value)
+        ->andWhere('t.etat = true')
+        ->getQuery()
+        ->getResult());
+
+        $nbrTotale = count($this->createQueryBuilder('t')
+        ->where('t.projet = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getResult());
+        return  round($nbrTermine / ($nbrTotale != 0 ? $nbrTotale : 1), 2); 
+        ;
+    }
+    
 }

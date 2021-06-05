@@ -47,6 +47,11 @@ class Tache
      */
     private $projet;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateCreation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,18 @@ class Tache
     public function setProjet(?projet $projet): self
     {
         $this->projet = $projet;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(\DateTimeInterface $dateCreation): self
+    {
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }

@@ -54,6 +54,18 @@ class Projet
      */
     private $taches;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $dateCreation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="command")
+     */
+    private $client;
+
+    
+
     public function __construct()
     {
         $this->taches = new ArrayCollection();
@@ -170,4 +182,42 @@ class Projet
     {
         return $this->titre;
     }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(?\DateTimeInterface $dateCreation): self
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    public function getDatetime(): ?\DateTimeInterface
+    {
+        return $this->datetime;
+    }
+
+    public function setDatetime(\DateTimeInterface $datetime): self
+    {
+        $this->datetime = $datetime;
+
+        return $this;
+    }
+
+    public function getClient(): ?user
+    {
+        return $this->client;
+    }
+
+    public function setClient(?user $client): self
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    
 }

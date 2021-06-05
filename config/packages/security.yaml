@@ -21,9 +21,10 @@ security:
             # anonymous: true
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuthenticator
+            # custom_authenticator: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
+            custom_authenticator: App\Security\LoginAuthenticator
                 # where to redirect after logout
                 # target: app_any_route
 

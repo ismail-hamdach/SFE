@@ -96,7 +96,7 @@ class UserController extends AbstractController
     public function search(int $id, UserRepository $userRepository): Response
     {   
         return $this->render('user/show.html.twig', [
-            'user' => $userRepository->findById($id),
+            'user' => $userRepository->findByIdAndRole($id, 'ROLE_EMPLOYE'),
         ]);
     }
 
@@ -157,14 +157,41 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/admin/client/", name="client_index", methods={"GET"})
+     * @Route("/admin/client/", name="client_index", methods={"GET", "POST"})
      */
-    public function indexClient(UserRepository $userRepository): Response
+    public function indexClient(Request $request, UserRepository $userRepository): Response
     {
+        $query = ['id' => null];
+        
+        $form = $this->createFormBuilder($query)
+            ->add('id', TextType::class, [
+                'label' => 'Recherche',
+                'attr' => ['placeholder' => 'Réfernece']
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $query = $form->getData();
+            return $this->redirectToRoute('client_search', ['id' => $query['id']]);
+        }
         return $this->render('client/index.html.twig', [
             'users' => $userRepository->findByRole("ROLE_CLIENT"),
+            'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/admin/client/result/{id}", name="client_search", methods={"GET"})
+     */
+    public function searchClient(int $id, UserRepository $userRepository): Response
+    {   
+        return $this->render('client/show.html.twig', [
+            'user' => $userRepository->findByIdAndRole($id, "ROLE_CLIENT"),
+        ]);
+    }
+
+   
 
     /**
      * @Route("/admin/client/new", name="client_new", methods={"GET","POST"})

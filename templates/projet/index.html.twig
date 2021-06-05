@@ -1,4 +1,10 @@
-{% extends 'base.html.twig' %}
+{% if type == 'gerant' or type == 'client' %}
+    {% set extend = 'gerant.base.html.twig' %}
+{% else %}
+    {% set extend = 'base.html.twig' %}
+{% endif %} 
+
+{% extends extend %}
 
 {% block title %}G. Projets{% endblock %}
 
@@ -6,13 +12,18 @@
     <div class="container-fluid">
         <div class="row section">
             <div class="col-sm-6">
-                <h1>Gestion des Projets</h1>
+                {{ type == 'client' ? '<h1>Les projets</h1>' : '<h1>Gestion des projets</h1>'}}
             </div>
-            <div class="col-sm-6 d-flex justify-content-end">
-                <div class="btn btn-dark"> <a href="{{ path('projet_new') }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
-            </div>
+            {% if type == 'admin' %}
+                <div class="col-sm-6 d-flex justify-content-end">
+                    <div class="btn btn-dark"> <a href="{{ path('projet_new') }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+                </div>
+            {% endif %}
         </div>
-    
+        
+        <div class="section d-flex justify-content-start">
+                {{ include('service/_searchForm.html.twig') }}
+        </div>
 
         <div class="row section">
             <div class="table-responsive">
@@ -21,12 +32,13 @@
                         <tr>
                             <th class="th-lg" scope="row" >#</th>
                             <th class="th-lg" scope="row">Titre</th>
-                            {# <th class="th-lg" scope="row">Description</th> #}
+                            <th class="th-lg" scope="row">Avancement</th>
                             
                             <th class="th-lg" scope="row">Responsable</th> 
                             <th class="th-lg" scope="row">Prix</th>
                             <th class="th-lg" scope="row">Avance</th>
                             <th class="th-lg" scope="row">Service</th>
+                            <th class="th-lg" scope="row">Date de création</th>
                             <th class="th-lg" scope="row"></th>
                         </tr>
                     </thead>
@@ -35,22 +47,36 @@
                         <tr>
                             <th scope="row">{{ projet.id }}</th>
                             <td>{{ projet.titre }}</td>
-                            {# <td>{{ projet.description }}</td> #}
+                            <td>{{ avancement[projet.id] * 100 }}%</td>
                             <td>{{ projet.responsable }}</td>
                             <td>{{ projet.prix }}</td>
                             <td>{{ projet.avance }}</td>
                             <td>{{ projet.service }}</td>
+                            <td>{{ projet.dateCreation |date('d-m-Y') }}</td>
                                 
                             <td>
                                 <div class="iconOnWhite">
-                                    <a href="{{ path('projet_show', {'id': projet.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
-                                    <a href="{{ path('projet_edit', {'id': projet.id}) }}" data-toggle="popover" title="Modifier" ><i class="fas fa-edit"> </i></a>
+                                    
+                                    {% if type != 'client' %}
+                                       {% if type == 'gerant' %}
+                                            <a href="{{ path('projet_show_gerant', {'id': projet.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                            <a href="{{ path('tache_index', {'idp': projet.id}) }}" data-toggle="popover" title="Les taches" ><i class="fas fa-tasks"></i> </i></a>
+                                        {% else %}
+                                            <a href="{{ path('projet_show', {'id': projet.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                            <a href="{{ path('projet_edit', {'id': projet.id}) }}" data-toggle="popover" title="Modifier" ><i class="fas fa-edit"> </i></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{{ path('projet_show_client', {'id': projet.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                    {% endif %}
+
+                                    
+                                    
                                 </div>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6">Vide</td>
+                            <td colspan="8">Vide</td>
                         </tr>
                     {% endfor %}
                 </tbody>

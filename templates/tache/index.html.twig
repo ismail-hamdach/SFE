@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'gerant.base.html.twig' %}
 
 {% block title %}Tache index{% endblock %}
 
@@ -8,9 +8,16 @@
             <div class="col-sm-6">
                 <h1>Gestion des tahces</h1>
             </div>
-            <div class="col-sm-6 d-flex justify-content-end">
-                <div class="btn btn-dark">  <a href="{{ path('tache_new') }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
-            </div>
+            {% if type == 'gerant' %}
+                <div class="col-sm-6 d-flex justify-content-end">
+                    <div class="btn btn-dark">  <a href="{{ path('tache_new', {'idp': taches[0].projet.id}) }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+                </div>
+                <div class="col-sm-6 d-flex justify-content-start">
+                   <div class="btn btn-sm btn-dark">
+                        <a href="{{ path('projet_index_gerant') }}">Retourner à la liste des projets</a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="row section">
             <div class="table-responsive">
@@ -24,6 +31,7 @@
                             <th class="th-lg" scope="row">Affectué à</th>
                             <th class="th-lg" scope="row">Projet</th>
                             <th class="th-lg" scope="row">Duree</th>
+                            <th class="th-lg" scope="row">Date de début</th>
                             <th class="th-lg" scope="row">actions</th>
                         </tr>
                     </thead>
@@ -37,16 +45,22 @@
                             <td>{{ tache.employe }}</td>
                             <td>{{ tache.projet }}</td>
                             <td>{{ tache.duree }}</td>
+                            <td>{{ tache.dateCreation |date('d-m-Y') }}</td>
                             <td>
                                 <div class="iconOnWhite">
-                                    <a href="{{ path('tache_show', {'id': tache.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
-                                    <a href="{{ path('tache_edit', {'id': tache.id}) }}" data-toggle="popover" title="Modifier" ><i class="fas fa-edit"> </i></a>
+                                    {% if type == 'gerant' %}
+                                        <a href="{{ path('tache_show', {'id': tache.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                        <a href="{{ path('tache_edit', {'idp': tache.projet.id,'id': tache.id}) }}" data-toggle="popover" title="Modifier" ><i class="fas fa-edit"> </i></a>
+                                    {% else %}
+                                        <a href="{{ path('tache_show_employe', {'id': tache.id}) }}" data-toggle="popover" title="Afficher" ><i class="fas fa-search"> </i></a>
+                                        <a href="{{ path('tache_edit_employe', {'id': tache.id}) }}" data-toggle="popover" {{tache.etat ? 'title="Pas encoure" ><i class="fas fa-times"></i>' : 'title="Terminer" ><i class="fas fa-check"></i>'}}</a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6">Vide</td>
+                            <td colspan="8">Vide</td>
                         </tr>
                     {% endfor %}
                     </tbody>
