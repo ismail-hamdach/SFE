@@ -64,6 +64,11 @@ class Projet
      */
     private $client;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $etat;
+
     
 
     public function __construct()
@@ -215,6 +220,18 @@ class Projet
     public function setClient(?user $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getEtat(): ?bool
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?bool $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }

@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DashBoard{% endblock %}
+
+
+
+{% block body %}
+  <div class="container-fluid">
+    <div class="row d-flex justify-content-center section">
+        
+        <div class="col-3 mt-4 ">
+            <div class="card green1" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des projets</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrTProjet"]}}</p>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-3 mt-4 ">
+            <div class="card green2" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des projets actives</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrActiveProjets"]}}</p>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-3 mt-4 ">
+            <div class="card green3" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des projets réalisés</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrInactiveProjets"]}}</p>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-3 mt-4 ">
+            <div class="card green4" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des clients</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrClients"]}}</p>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-3 mt-4 ">
+            <div class="card green5" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des employés</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrUsers"]}}</p>
+              </div>
+            </div>
+        </div>
+        
+        <div class="col-3 mt-4 ">
+            <div class="card green6" >
+              <div class="card-body">
+                <h5 class="card-title">Nombre des services</h5>
+                <div class="bar text-center"></div>
+                <p class=" number-card">{{data["nbrServices"]}}</p>
+              </div>
+            </div>
+        </div>
+        <div class = "section col-10"></div>
+    </div>
+    
+  </div>
+{% endblock %}

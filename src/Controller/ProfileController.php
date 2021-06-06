@@ -4,8 +4,13 @@ namespace App\Controller;
 
 use App\Form\MotPassType;
 use App\Form\ProfileType;
+use App\Repository\ProjetRepository;
+use App\Repository\ServiceRepository;
+use App\Repository\TacheRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
+use Symfony\UX\Chartjs\Model\Chart;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -112,7 +117,7 @@ class ProfileController extends AbstractController
     {
         switch ($this->getUser()->getRoles()[0]) {
             case 'ROLE_ADMIN':
-                return $this->redirectToRoute('user_index');
+                return $this->redirectToRoute('dash_board');
                 break;
              case 'ROLE_GERANT':
                 return $this->redirectToRoute('projet_index_gerant');
@@ -129,5 +134,45 @@ class ProfileController extends AbstractController
                 break;
         }
         return $this->render('profile/index.html.twig');
+    }
+
+
+    /**
+     * @Route("admin/", name="dash_board")
+     */
+    public function dashBoard(ChartBuilderInterface $chartBuilder, ServiceRepository $serviceRepository, UserRepository $userRepository, ProjetRepository $projetRepository): Response
+    {
+        
+        $nbrTProjet = count($projetRepository->findAll());
+        $nbrActiveProjets = count($projetRepository->findBy(['etat' => '1']));
+        $nbrInactiveProjets = $nbrTProjet - $nbrActiveProjets;
+        $nbrClients = count($userRepository->findByRole("ROLE_CLIENT"));
+        $nbrUsers = count($userRepository->findByRole("ROLE_EMPLOYE"));
+        $nbrServices = count($serviceRepository->findAll());
+        $data = [
+                 "nbrTProjet" => $nbrTProjet,
+                 "nbrActiveProjets" => $nbrActiveProjets, 
+                 "nbrInactiveProjets" => $nbrInactiveProjets, 
+                 "nbrClients" => $nbrClients, 
+                 "nbrUsers" => $nbrUsers, 
+                 "nbrServices" => $nbrServices
+                ];
+        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $chart->setData([
+            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            'datasets' => [
+                [
+                    'label' => 'Sales!',
+                    'backgroundColor' => 'rgb(255, 99, 132)',
+                    'borderColor' => 'rgb(255, 99, 132)',
+                    'data' => [522, 1500, 2250, 2197, 2345, 3122, 3099],
+                ],
+            ],
+        ]);
+        
+        return $this->render('admin/dashBoard.html.twig', [
+            'chart' => $chart,
+            'data' => $data,
+        ]);
     }
 }

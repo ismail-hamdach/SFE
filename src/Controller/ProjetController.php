@@ -44,24 +44,68 @@ class ProjetController extends AbstractController
         switch($routeName){
             case 'projet_index_gerant' : 
                 $projets = $projetRepository->findByResponsable($this->getUser());
-                foreach($projets as $projet)
+                foreach($projets as $projet){
                     $avancement[$projet->getId()] = $tacheRepository->AvancementProjet($projet);
+                    if($avancement[$projet->getId()] == 1 && !$projet->getEtat()){
+                        $projet->setEtat(true);
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($projet);
+                        $entityManager->flush();
+                    }else{
+                        if($avancement[$projet->getId()] < 1 && $projet->getEtat()){
+                            $projet->setEtat(false);
+                            $entityManager = $this->getDoctrine()->getManager();
+                            $entityManager->persist($projet);
+                            $entityManager->flush();
+                        }
+                    }
+                }
+                    
                 $type = 'gerant';
                 break;
             case 'projet_index' : 
                 $projets =  $projetRepository->findAll();
-                foreach($projets as $projet)
+                foreach($projets as $projet){
                     $avancement[$projet->getId()] = $tacheRepository->AvancementProjet($projet);
+                    if($avancement[$projet->getId()] == 1 && !$projet->getEtat()){
+                        $projet->setEtat(true);
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($projet);
+                        $entityManager->flush();
+                    }else{
+                        if($avancement[$projet->getId()] < 1 && $projet->getEtat()){
+                            $projet->setEtat(false);
+                            $entityManager = $this->getDoctrine()->getManager();
+                            $entityManager->persist($projet);
+                            $entityManager->flush();
+                        }
+                    }
+                }
+                    
                 $type = 'admin';
                 break;
             case 'projet_index_client' : 
                 $projets = $projetRepository->findBy(['client' => $this->getUser()]);
-                foreach($projets as $projet)
+                foreach($projets as $projet){
                     $avancement[$projet->getId()] = $tacheRepository->AvancementProjet($projet);
+                    if($avancement[$projet->getId()] == 1 && !$projet->getEtat()){
+                        $projet->setEtat(true);
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($projet);
+                        $entityManager->flush();
+                    }else{
+                        if($avancement[$projet->getId()] < 1 && $projet->getEtat()){
+                            $projet->setEtat(false);
+                            $entityManager = $this->getDoctrine()->getManager();
+                            $entityManager->persist($projet);
+                            $entityManager->flush();
+                        }
+                    }
+                }
+                    
                 $type = 'client';
                 break;
         }
-
         
         return $this->render('projet/index.html.twig', [
             'projets' => $projets,

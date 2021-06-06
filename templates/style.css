@@ -520,3 +520,46 @@
 			.container-fluid {
 				margin-top: 15px;
 			}
+			.number-card{
+				/* padding-left: 25px; */
+				text-align: center;
+				margin: 38px;
+				font-size: xx-large;
+				font-weight: 700;
+				color: white;
+			}
+			.bar{
+				border-bottom: #fff solid 2px;
+				margin: 10px 0px;
+				width: 100%;
+				text-align: center;
+			}
+			.green1{
+				background-color: rgb(215, 241, 113);
+			}
+			.green2{
+				background-color: rgb(181, 232, 119);
+			}
+			.green3{
+				background-color: rgb(149, 221, 125);
+			}
+			.green4{
+				background-color: rgb(119, 209, 131);
+			}
+			.green5{
+				background-color: rgb(91, 196, 137);
+			}
+			.green6{
+				background-color: rgb(35, 170, 143);
+			}
+			
+			.card{
+				color: #fff;
+				text-align: center;
+				border: none;
+				border-radius: 5px;
+			}
+			.card-title{
+				font-weight: bold;
+			}
+			

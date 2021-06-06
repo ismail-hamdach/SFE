@@ -16,9 +16,11 @@
 
         {% block javascripts %}
             {#{{ encore_entry_script_tags('app') }}#}
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
             <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>    
             <script>{{ source('script.js') }}</script>
+			
         {% endblock %}
     </head>
     <body>
@@ -63,7 +65,7 @@
 				<div class="sidebar-menu">
 					<ul>
 					<li>
-						<a href="{{ path('user_index') }}">
+						<a href="{{ path('dash_board') }}">
 						<i class="fas fa-tachometer-alt"></i>
 						<span>DashBoard</span>
 						</a>
