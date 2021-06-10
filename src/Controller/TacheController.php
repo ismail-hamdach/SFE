@@ -38,10 +38,14 @@ class TacheController extends AbstractController
             $taches = $tacheRepository->findBy(['employe' => $this->getUser()], ['etat' => 'ASC', 'dateCreation' => 'DESC']);
             $type = 'employe';
         }
+        if (!isset($projet)) {
+            $projet = null;
+        }
         
         
         return $this->render('tache/index.html.twig', [
             'taches' => $taches,
+            'projet' => $projet ,
             'type' => $type,
         ]);
     }

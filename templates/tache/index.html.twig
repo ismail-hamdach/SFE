@@ -10,7 +10,11 @@
             </div>
             {% if type == 'gerant' %}
                 <div class="col-sm-6 d-flex justify-content-end">
-                    <div class="btn btn-dark">  <a href="{{ path('tache_new', {'idp': taches[0].projet.id}) }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+                    {% if taches[0].projet.id is defined %}
+                        <div class="btn btn-dark">  <a href="{{ path('tache_new', {'idp': taches[0].projet.id }) }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+                    {% else %}
+                        <div class="btn btn-dark">  <a href="{{ path('tache_new', {'idp': projet.id }) }}">Ajouter <i class="fas fa-plus-circle"></i></a></div>
+                    {% endif %}
                 </div>
                 <div class="col-sm-6 d-flex justify-content-start">
                    <div class="btn btn-sm btn-dark">
