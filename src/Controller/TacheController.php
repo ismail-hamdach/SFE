@@ -111,7 +111,7 @@ class TacheController extends AbstractController
      * @Route("gerant/tache/show/{id}", name="tache_show", methods={"GET", "POST"})
      * @Route("employe/tache/show/{id}", name="tache_show_employe", methods={"GET", "POST"})
      */
-    public function show(Tache $tache, ProjetRepository $projetRepository, Request $request): Response
+    public function show(Tache $tache, Request $request): Response
     {
         $routeName = $request->get('_route');
         if($routeName == 'tache_show'){
@@ -147,7 +147,7 @@ class TacheController extends AbstractController
 
     /**
      * @Route("gerant/tache/{id}/edit/{idp}", name="tache_edit", methods={"GET","POST"})
-     * @Route("gerant/tache/{id}/edit/", name="tache_edit_employe", methods={"GET","POST"})
+     * @Route("employe/tache/check/{id}/edit/", name="tache_edit_employe", methods={"GET","POST"})
      */
     public function edit(Request $request, Tache $tache): Response
     {
@@ -168,11 +168,6 @@ class TacheController extends AbstractController
                 ->add('employe', null, [
                     'label' => 'Afféctué à '
                 ])
-                // ->add('projet', ChoiceType::class, [
-                //     'choices' => [
-                //         $projet -> getTitre() => $projet
-                //     ]
-                // ])
                 ->getForm();
             $form->handleRequest($request);
 
@@ -196,16 +191,32 @@ class TacheController extends AbstractController
         
     }
 
+    // /**
+    //  * @Route("employe/tache/check/{id}/edit/", name="tache_edit_employe", methods={"GET","POST"})
+    //  */
+    // public function checkTache(Request $request, Tache $tache): Response
+    // {
+        
+    //     if($tache->getEmploye() == $this->getUser()){
+    //         $tache->setEtat(!$tache->getEtat());
+    //         $this->getDoctrine()->getManager()->flush();
+    //     }
+    //     return $this->redirectToRoute('tache_index_employe');
+        
+        
+    // }
+
     /**
-     * @Route("/{id}", name="tache_delete", methods={"POST"})
+     * @Route("gerant/{id}", name="tache_delete", methods={"POST"})
      */
     public function delete(Request $request, Tache $tache): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$tache->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($tache);
-            $entityManager->flush();
-        }
+        if($tache -> getProjet()->getResponsable() == $this->getUser())
+            if ($this->isCsrfTokenValid('delete'.$tache->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($tache);
+                $entityManager->flush();
+            }
 
         return $this->redirectToRoute('tache_index');
     }
