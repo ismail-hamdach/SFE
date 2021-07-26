@@ -39,9 +39,7 @@ class ProfileController extends AbstractController
     }
     
    /**
-     * @Route("admin/profile/edit", name="edit_profile")
-     * @Route("employe/profile/edit", name="edit_profile_employe")
-     * @Route("client/profile/edit", name="edit_profile_client")
+     * @Route("profile/edit", name="edit_profile")
      */
     public function edit(Request $request): Response
     {
@@ -51,15 +49,16 @@ class ProfileController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $routeName = $request->get('_route');
+            $user = $this->getUser();
             $this->getDoctrine()->getManager()->flush();
-            switch ($routeName) {
-                case 'edit_profile':
+            switch ($user->getToles[0]) {
+                case 'ROLE_ADMIN':
                     return $this->redirectToRoute('profile_admin');
                     break;
-                case 'edit_profile_employe':
+                case 'ROLE_EMPLOYE':
                     return $this->redirectToRoute('profile_employe');
                     break;
-                case 'edit_profile_client':
+                case 'ROLE_CLIENT':
                     return $this->redirectToRoute('profile_client');
                     break;
                 default:
